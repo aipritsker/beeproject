@@ -193,39 +193,30 @@ for T = 0:(numyears-1) %T tells us what year we are in 0,1, 2...
     R=zeros(1,yeardays-summerdays);
     	
 
-	for t = (yeardays*T+summerdays+1):(yeardays*(T+1))
-
-		Y = winterbeesR(Y,t);
-
-		res(1:4,(t-(yeardays*T+summerdays)))=W*Y(5:end);
-      
+    for t = (yeardays*T+summerdays+1):(yeardays*(T+1))
+        Y = winterbeesR(Y,t);
+        res(1:4,(t-(yeardays*T+summerdays)))=W*Y(5:end);
         V(1,(t-(yeardays*T+summerdays))) = Y(1);
-        
-                if Y(1)== 0
-                    disp('ran out of space, on day:')
-                    disp(t)
-                    break
-                end
-
-         P(1,(t-(yeardays*T+summerdays))) = Y(2);
-         
-                if Y(2) == 0
-                    disp('Hive starved, no pollen, on day:')
-                    disp(t)
-                    break
-                end
-    
+        if Y(1)== 0
+            disp('ran out of space, on day:')
+            disp(t)
+            break
+        end
+        P(1,(t-(yeardays*T+summerdays))) = Y(2);
+        if Y(2) == 0
+            disp('Hive starved, no pollen, on day:')
+            disp(t)
+            break
+        end
         H(1,(t-(yeardays*T+summerdays))) = Y(3);
-            
-                if Y(3) == 0
-                   disp('Hive staved, no honey, on day:')
-                   disp(t)
-                   break
-                end
-
-        R(1,(t-(yeardays*T+summerdays))) = Y(4);
         
-     end %END OF LOOP THROUGH WINTER
+        if Y(3) == 0
+            disp('Hive staved, no honey, on day:')
+            disp(t)
+            break
+        end
+        R(1,(t-(yeardays*T+summerdays))) = Y(4);
+    end %END OF LOOP THROUGH WINTER
     
 	pop(:, (yeardays*T+summerdays+1):(yeardays*(T+1))) =res;
     

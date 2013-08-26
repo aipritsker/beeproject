@@ -51,7 +51,7 @@ Factorstore=6;
 PollenDemand= a1*stage(1)+a2*stage(2)+a4*stage(4)+a5*stage(5); 
 HoneyDemand = h1*stage(1)+h2*stage(2)+h4*stage(4)+h5*stage(5)+h6*stage(6);
 
-if PollenDemand | HoneyDemand <= 0
+if ( (PollenDemand <= 0) || (HoneyDemand <= 0) )
     disp('PollenDemand or HoneyDemand leq zero, dead hive')
 end
 
@@ -113,7 +113,7 @@ survivorship(43:48)= (st5*min(1,1-Indexhoney))^(1/6);
 
 survivorship(48:49)=thf*survivorship(47);
 
-survivorship(49:agemax,1)= (1-v)*st6^(1/12); % v is reversed probability of the forager bee stage to revert back to in-hive nurse bees. 
+survivorship(49:agemax)= (1-v)*st6^(1/12); % v is reversed probability of the forager bee stage to revert back to in-hive nurse bees. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Everything here just relates to storage and matrix multiplication.
