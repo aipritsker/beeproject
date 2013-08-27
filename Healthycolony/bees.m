@@ -223,7 +223,7 @@ if stage(6) <= 1
     predictedhoney=0;    
 else
     %volume ratio of honey/nectar = 0.4
-    predictedhoney = 0.4 *10000;% interp2(REAL(hsurfX,hsurfY,hsurf,0.8*stage(5),stage(6)-PollenForager));
+    predictedhoney = 0.4 *100;% interp2(REAL(hsurfX,hsurfY,hsurf,0.8*stage(5),stage(6)-PollenForager));
         if predictedhoney == 0
             disp('interp function said no honey')
         end
@@ -252,6 +252,6 @@ Vt1 = Vt; % Vacant cells at end of the day - gets updated throughout file
 R;
 Nt1(1) = R; %R; %number of eggs laid today, these are now the age zero eggs
 
-nextstate = [Vt1; Pt1; Ht1; R; Nt1]
+nextstate = [Vt1; Pt1; Ht1; R; Nt1];
 
 return
