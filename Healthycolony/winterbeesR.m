@@ -6,7 +6,7 @@ agemaxwinter=150; % indexing in matlab starts at 1, so add an extra day
 
 %% pollen consumption rate for each stage of bees during the winter 
 a2 = .005; % fraction of a cell's pollen consumed by a larva in one day
-a4 = .028; % fraction of a cell's pollen consumed by a nurse in one day
+a4 = 0; %.028; % fraction of a cell's pollen consumed by a nurse in one day
 
 %% honey consumption rate for each stage of bees during the winter
 h4 = 0.022; % fraction of a cell's honey consumed by a nurse bee in one day

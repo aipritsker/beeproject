@@ -5,6 +5,7 @@ global qh st1 st2 st3 st4 st5 st6;
 global FactorBroodNurse u v rt; 
 global a1 a2 a3 a4 a5 a6 h1 h2 h3 h4 h5 h6;
 global tel tlp tpn tnh thf;
+global V0;
 
 u = 0; % probability of individual nurse bee precociously developing to forager
 v = 0; % reversed prob. between foragers and house bees;
@@ -68,7 +69,8 @@ G(1,1:3)=1; G(2,4:11)=1; G(3,12:26)=1; G(4,27:42)=1;G(5,43:48)=1;G(6,49:agemax)=
 P0 = 200;
 %P0 = 1000; %initial cells of pollen
 
-V0 = 60000000 - P0; %intial vacant cells, total number cells is 140000
+V0 = 300000 - 200; %intial vacant cells, total number cells is 140000
+%subtract to leave room for eggs and pollen
 
 H0=0; %initial  honey
 
@@ -110,7 +112,7 @@ H=zeros(1,tx);
 
 R=zeros(1,tx);
 
-numyears =1;
+numyears = 2;
 summerdays = 240;
 yeardays = 360;
 
@@ -135,7 +137,7 @@ for T = 0:(numyears-1) %T tells us what year we are in 0,1, 2...
  
 		     V(1,t-yeardays*T)= X(1);
 
-		     P(1,t-yeardays*T)= X(2);
+		     P(1,t-yeardays*T) = X(2);
         
              H(1,t-yeardays*T)= X(3);
 
@@ -161,17 +163,19 @@ for T = 0:(numyears-1) %T tells us what year we are in 0,1, 2...
 
 	N = zeros(agemaxwinter,1);
 
-	N(1:3)= res(1,summerdays)/3;
+	N(1:3) = res(1,summerdays)/3;
 
-	N(4:11)= res(2,summerdays)/8;
+	N(4:11) = res(2,summerdays)/8;
 
-	N(12:26)= res(3,summerdays)/15;
+	N(12:26) = res(3,summerdays)/15;
 
-	N(27:agemaxwinter)=(res(4,summerdays)+res(5,summerdays)+res(6,summerdays))/124;
+    N(27:agemax) = (res(4,summerdays)+res(5,summerdays)+res(6,summerdays))/34;
+    % this doesn't make sense- it's like artificially aging many of them.  
+	%N(27:agemaxwinter)=(res(4,summerdays)+res(5,summerdays)+res(6,summerdays))/124; 
 
 	P0 = P(1,summerdays);
 
-    V0 = V(1,summerdays); %we are going into winter with zero vacant cells.... maybe there are no
+    V0 = V(1,summerdays); 
 
     H0 = H(1,summerdays);
 
@@ -268,9 +272,9 @@ for T = 0:(numyears-1) %T tells us what year we are in 0,1, 2...
 end %END OF LOOP THROUGH MULTIPLE YEARS
 
 %for each day, this gives the ratio of eggs+larvae/nurse+house bees
-BARatio=(pop(1,1:360*numyears)+pop(2,1:360*numyears))./(pop(4,1:360*numyears)+pop(5,1:360*numyears)); 
+% BARatio=(pop(1,1:360*numyears)+pop(2,1:360*numyears))./(pop(4,1:360*numyears)+pop(5,1:360*numyears)); 
 %for each day, this gives the ratio of foragers/nurse+house bees
-FARatio=pop(6,1:360*numyears)./(pop(4,1:360*numyears)+pop(5,1:360*numyears));
+% FARatio=pop(6,1:360*numyears)./(pop(4,1:360*numyears)+pop(5,1:360*numyears));
 
 YMatrix1=pop';
 A=Ppop; %pollen storage throughout all seaseons
@@ -281,7 +285,7 @@ YMatrix2= [A;B]';
  Y3=Rpop;
 %Y3=pop(3)*0.1552/1000+pop(4)*0.2189/1000+pop(5)*0.2189/1000+A+B;
 createfigure1(YMatrix1, YMatrix2, Y3); 
-%  figure;
+ % figure;
 
 % plot(Y3);
 % foundationweight = 50.2 * 453.6 /1000;

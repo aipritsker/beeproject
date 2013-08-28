@@ -152,12 +152,13 @@ scavanged = notsurvive*Nt(1:26); %this was the line that was generating an error
 honeyeaten= min([Ht HoneyDemand]); 
 
 % Empty Cells due to the cleaned food cells and adult emergence
-vacated = Nt(26) + foodeaten + honeyeaten;
+vacated = Nt(26) + foodeaten + honeyeaten; %check this, maybe not Nt(26)- maybe Nt1(26)?
 Vt = Vt + vacated + scavanged ;
 %Actual eggs layed by queen this day determined here
-if stage(4)+stage(5)+stage(6)<= 100 % the minimum requirement of number of bees needed to be around a queen bee
-    disp('HIVE DEAD, leq 100 adult bees left')
-    R=0;
+if (stage(4)+stage(5)+stage(6))<= 100 % the minimum requirement of number of bees needed to be around a queen bee
+    disp('HIVE COLLAPSED, leq 100 adult bees left')
+    disp(date);
+    R = 0;
 else 
     % The actual egg production per day depends on the queen egg laying potential, 
     % the nursing workforce and the available hive space - the function below is
@@ -167,7 +168,7 @@ else
     %R = min([qh*maxProduction,stage(4)*FactorBroodNurse,Vt+vacated+scavangedcells]);
     %qh is set to 1 currently- simplified, always max production
 
-    R = min([Vt, maxProduction]); 
+    R = min([Vt, qh*maxProduction]); 
     %the only cap on the egg laying right now is the 
 end 
 %UPDATE VACANT CELL COUNT
@@ -204,7 +205,7 @@ PollenForager=max(stage(6)*0.01, min(NeedPollenForager,stage(6)*0.33)); %%THIS o
 
 % pollen storage depends on the available cells in the hive
 % and the foraging collection efficiency of the pollen forager---assumption for pollen foraging behavior
-storedfood = max( 0, min(PollenForager*0.48,Vt));
+storedfood = max([0 min([PollenForager*0.48 Vt/4])]);
 
 %UPDATE VACANT CELL COUNT
 Vt = Vt - storedfood ;
@@ -223,14 +224,14 @@ if stage(6) <= 1
     predictedhoney=0;    
 else
     %volume ratio of honey/nectar = 0.4
-    predictedhoney = 0.4 *100;% interp2(REAL(hsurfX,hsurfY,hsurf,0.8*stage(5),stage(6)-PollenForager));
+    predictedhoney = 0.4*interp2(hsurfX,hsurfY,hsurf,0.8*stage(5),stage(6)-PollenForager);
         if predictedhoney == 0
             disp('interp function said no honey')
         end
 
 end
     
-storedhoney = max( 0, min(predictedhoney, Vt));
+storedhoney = min([predictedhoney (Vt/4)]);%max( 0, min(predictedhoney, Vt));
 
     
 %UPDATE VACANT CELL COUNT
@@ -246,10 +247,8 @@ Vt = Vt - storedhoney ;
 %% Pollen, Honey, Cells net input 
 Pt = Pt - foodeaten + storedfood;
 Pt1 = max(0,Pt); % Updated pollen stores at end of day
-Ht = Ht - honeyeaten +storedhoney;
-Ht1 = min(V0, Ht); % Updated honey stores at end of day, capped by total size of hive
-Vt1 = Vt; % Vacant cells at end of the day - gets updated throughout file  
-R;
+Ht1 = Ht - honeyeaten + storedhoney; % Updated honey stores at end of day, capped by total size of hive
+Vt1 = Vt % Vacant cells at end of the day - gets updated throughout file  
 Nt1(1) = R; %R; %number of eggs laid today, these are now the age zero eggs
 
 nextstate = [Vt1; Pt1; Ht1; R; Nt1];
