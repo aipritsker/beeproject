@@ -57,11 +57,10 @@ end
 
 % the level of the pollen stores in relation to the demand situation of the colony.
 %got rid of +1s in the denominators
-Indexpollen = max([0  min([1 Pt/(PollenDemand*Factorstore) ])] );%max(0,min(1,Pt/(PollenDemand*Factorstore)))
+Indexpollen = max([0  min([1 Pt/(PollenDemand*Factorstore + 1) ])] );%max(0,min(1,Pt/(PollenDemand*Factorstore)))
 Indexhoney = max([0 min([1 Ht/HoneyDemand])]); %max(0,min(1,Ht/(HoneyDemand)))
-
 %the level of the active nurse bees population in relation to the total nursing demand of all brood stages.
-IndexNursing = max(0,min(1,stage(4)/((stage(2)+stage(1))*FactorBroodNurse)));
+IndexNursing = max(0,min(1,stage(4)/((stage(2)+stage(1))*FactorBroodNurse+1)));
 
 
 %% Bee Dynamics : Everyone ages by one day
@@ -82,8 +81,7 @@ survivorship(1:3) = st1^(1/3); % the daily survival rate of egg stage at age(i=1
 
 survivorship(3:4) =tel*survivorship(2); % stage transitional rate egg to larva
 
-survivorship(4:11) = st2^(1/8); %  LARVA
-%(st2*min(1,max(0,1-0.15*(1-Indexpollen*IndexNursing))))^(1/8); %  LARVA 
+survivorship(4:11) = (st2*min(1,max(0,1-0.15*(1-Indexpollen*IndexNursing))))^(1/8); %  LARVA 
 % st2: the time independent base mortality rate of larval stage at any age (4-11 days old- total 8 days)
 % Larvae are frequently cannibalized in a honeybee colony.
 % The rate of cannibalism depends on the age of the larvae (Schmickl and Crailsheim, 2001),
@@ -104,9 +102,9 @@ survivorship(26:27)=tpn*survivorship(25) ;
 % NURSE: who don't precociously forage (1-u) and who survive one day of 16 that make up st4
 %It will be varied by the nursing efforts. A higher nursing load will
 %cause a higher mortality of the nurse bee stage.
-survivorship(27:42) = (1-u)*st4^(1/16);
-%(1-u)*(st4*max(0,min(1,1-Indexpollen-Indexhoney)))^(1/16) ;
-
+survivorship(27:42)= (1-u)*(st4*max(0,min(1,1-IndexNursing)))^(1/16) ; %= (1-u)*st4^(1/16);
+% = (1-u)*(st4*max(0,min(1,1-IndexNursing)))^(1/16) ;
+% = (1-u)*max(0,(1-(1-st4)*IndexNurseload))^(1/16);
 %stage transition rate NURSE to HOUSE bee
 survivorship(42:43)=tnh*survivorship(41) ;
 
@@ -200,8 +198,8 @@ NeedPollenForager=PollenNeed/foragingsuccess;
 % make pollen foraging), even when there is almost no pollen need (personal
 % observation). The maximum number of pollen foragers is 33% of the current
 % cohort of foragers. 
-PollenForager=max(stage(6)*0.01, min(NeedPollenForager,stage(6)*0.33)); %%THIS one seems like the right one! with the 33% cap!
-%PollenForager=min(stage(6),max(stage(6)*0.01, NeedPollenForager));
+PollenForager=max(stage(6)*0.01, min(NeedPollenForager,stage(6)*.33)); %%THIS one seems like the right one! with the 33% cap!
+%PollenForager = max([stage(6)*0.01 min([NeedPollenForager stage(6)])]);
 
 % pollen storage depends on the available cells in the hive
 % and the foraging collection efficiency of the pollen forager---assumption for pollen foraging behavior
@@ -221,18 +219,26 @@ Vt = Vt - storedfood ;
  
 if stage(6) <= 1 
     disp('no foragers'); %I don't see why this is here... shouldn't house bees just take over this role?
+    disp(date);
     predictedhoney=0;    
 else
     %volume ratio of honey/nectar = 0.4
-    predictedhoney = 0.4*interp2(hsurfX,hsurfY,hsurf,0.8*stage(5),stage(6)-PollenForager);
+     predictedhoney = .4 * interp1(hsurfX,hsurf, stage(6)-PollenForager); 
+     %disp(predictedhoney)
+     
+     %this one causes crazy errors and discontinuites
+     %0.4*interp2(hsurfX,hsurfY,hsurf,0.8*stage(5),stage(6)-PollenForager);
+     
+     %this is the old, slow version
+%     initial=[0.8*stage(5),0.8*stage(5),1,0,0,stage(6)-PollenForager]';
+%     predictedhoney = honeycollection(initial);
         if predictedhoney == 0
             disp('interp function said no honey')
         end
 
 end
     
-storedhoney = min([predictedhoney (Vt/4)]);%max( 0, min(predictedhoney, Vt));
-
+storedhoney = min([predictedhoney Vt]);
     
 %UPDATE VACANT CELL COUNT
 Vt = Vt - storedhoney ;
