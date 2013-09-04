@@ -45,12 +45,12 @@ if stage(4)<=100  % The minimum number of hive bees in a winter colony (2000-300
     disp('dead hive')
 else  
     % I DO NOT UNDERSTAND THE BIOLOGY OF THIS PART
-%     survivorship (1:3) = max( 0, overall_P* ( 1 - max(0,1-Ht/(0.022*stage(4)))));
-%     survivorship(4:11) = max(0, overall_P*( 1 - max(0,1- Pt/(a2*stage(2))))); % Larval survival depends on the intrinsic mortality and pollen availibility 
-%     survivorship (12:26) = max( 0, overall_P* ( 1 - max(0,1-Ht/(0.022*stage(4)))));
-%     survivorship(27:agemaxwinter)= max( 0, overall_P* ( 1 - max(0,1-Ht/(0.022*stage(4))))); % the survival of the adult bees in the hive depends on the intrisic mortality and the food availibility 
+    survivorship (1:3) = max( 0, overall_P* ( 1 - max(0,1-Ht/(h4*stage(4)))));
+    survivorship(4:11) = max(0, overall_P*( 1 - max(0,1- Pt/(a2*stage(2))))*(1-max(0,1-Ht/(a4*stage(4))))); % Larval survival depends on the intrinsic mortality and pollen availibility 
+    survivorship (12:26) = max( 0, overall_P* ( 1 - max(0,1-Ht/(h4*stage(4)))));
+    survivorship(27:agemaxwinter)= max( 0, overall_P* ( 1 - max(0,1-Ht/(h4*stage(4))))); % the survival of the adult bees in the hive depends on the intrisic mortality and the food availibility 
 
-survivorship (1:agemaxwinter) = overall_P;
+% survivorship (1:agemaxwinter) = overall_P;
 
 end 
 

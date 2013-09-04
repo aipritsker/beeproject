@@ -1,49 +1,7 @@
 % First Season Summer Dynamics 
 
 agemax = 60; % +1 because of matlab indexing
-global qh st1 st2 st3 st4 st5 st6;
-global FactorBroodNurse u v rt; 
-global a1 a2 a3 a4 a5 a6 h1 h2 h3 h4 h5 h6;
-global tel tlp tpn tnh thf;
 
-
-u = 0; % probability of individual nurse bee precociously developing to forager
-v = 0; % reversed prob. between foragers and house bees;
-FactorBroodNurse = 4 ; % One nurse bee can heat 2.65 brood cells - NOT CRUCIAL.. but probably closer to 5
-rt = 0; %probability of individual bee retardant developing to next age class
-qh = 1; %probability of ..? downregulation of queen egg laying of some sort
-
-%Honey consumption rates
-% fraction of a cell's honey consumed by a bee in one day, a cellful of honey weighs~~0.5g
-h1 = 0.0; %h1=0.12; 
-h2 = 0; % h2=0.012; 
-h3 = 0;
-h4 = 0.0525; % h4=0.1;
-h5 = 0.045; % h5=0.1;
-h6 = 0.136; % h6 = 0.1;
-
-%Pollen consumption rates
-%a cellful of pollen weighs~~0.23g
-a1 = 0; % eggs don't consume pollen?
-a2 = 0.0047;% fraction of a cell's pollen consumed by a larva in one day
-a3 = 0; %capped brood don't consume pollen from stores
-a4 = 0.0283;% fraction of a cell's pollen consumed by a nurse bee in one day
-a5 = 0.017; % fraction of a cell's pollen removed by a house bee in one day
-a6 = 0; %foragers don't consume pollen
-
-st1 = 0.913;%0.5; % st1=0.86; % 0.86--survivorship for egg stage 
-st2 = 0.923;%0.5; % st2= 0.85; %---survivorship for larval stage 
-st3 = 0.985;%0.86; % suvivorship for -- survivorship for pupa stage
-st4 = 0.923;%0.85; % 0.99-85%--survivorship for nurse bee stage 
-st5 = 0.913;%0.88; % 0.96-88.6%--survivorship for house bee stage 
-st6 = 0.78; % 78.5%--survivorship for forager bee stage %0.653;%
-
-
-tel = 0.98; %through-stage survival for egg maturing to 1st instar larva
-tlp = 0.85; %through-stage survival for larva maturaing to pupa
-tpn = 0.98; %through-stage survival for pupa maturing to nurse bee
-tnh = 0.98; %through stage survival for nurse bee maturing to house bee
-thf = 0.98; %through-stage survival for house been maturing to forager
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 G = zeros(6,agemax);
