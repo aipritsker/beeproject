@@ -1,19 +1,48 @@
 function nextstate = bees(state,date)% bee model in the field season 
 
-%%%% Empty Cell+Pollen Cells + Honey Cells+Brood Cells =Hive Space
-%%%%%%%%%%%%%%%%%%%%%Abnormal developmental cycle.(precocious+delayed development in bees)
-% u=0.0;%precocious prob
-% v=0.0;% reversed prob. between foragers and house bees;
-
 
 agemax=60; % indexing in matlab starts at 1, so add an extra day
 
-global qh st1 st2 st3 st4 st5 st6; % st1,2,3,5,6: survival rate for each stage of bees; mt4-the mortality rate of nurse bee stage; 
-global tel tlp tpn tnh thf;
-global  FactorBroodNurse; % The brood rearing efficiency: the constant ratio of egg to nurse bees as signal for queen to decide the egg laying rate. 
-global u v rt; % The probability of precocious foraging (u), reversed behavior of foragers to in-hive behaviors(v), the delayed development of adult bees at each age(rt); 
-global a1 a2 a4 a5 h1 h2 h4 h5 h6; %%%cosumption rate of honey and pollen  for each stage of bees 
 global hsurfX hsurfY hsurf; % the interpolated surface of NectarODE and honeycollection 
+
+u = 0; % probability of individual nurse bee precociously developing to forager
+v = 0; % reversed prob. between foragers and house bees;
+FactorBroodNurse = 4 ; % One nurse bee can heat 2.65 brood cells - NOT CRUCIAL.. but probably closer to 5
+rt = 0; %probability of individual bee retardant developing to next age class
+qh = 1; %probability of ..? downregulation of queen egg laying of some sort
+
+%Honey consumption rates
+% fraction of a cell's honey consumed by a bee in one day, a cellful of honey weighs~~0.5g
+h1 = 0.0; %h1=0.12; 
+h2 = 0; % h2=0.012; 
+h3 = 0;
+h4 = 0.0525; % h4=0.1;
+h5 = 0.045; % h5=0.1;
+h6 = 0.136; % h6 = 0.1;
+
+%Pollen consumption rates
+%a cellful of pollen weighs~~0.23g
+a1 = 0; % eggs don't consume pollen?
+a2 = 0.0047;% fraction of a cell's pollen consumed by a larva in one day
+a3 = 0; %capped brood don't consume pollen from stores
+a4 = 0.0283;% fraction of a cell's pollen consumed by a nurse bee in one day
+a5 = 0.017; % fraction of a cell's pollen removed by a house bee in one day
+a6 = 0; %foragers don't consume pollen
+
+st1 = 0.913;%0.5; % st1=0.86; % 0.86--survivorship for egg stage 
+st2 = 0.923;%0.5; % st2= 0.85; %---survivorship for larval stage 
+st3 = 0.985;%0.86; % suvivorship for -- survivorship for pupa stage
+st4 = 0.923;%0.85; % 0.99-85%--survivorship for nurse bee stage 
+st5 = 0.913;%0.88; % 0.96-88.6%--survivorship for house bee stage 
+st6 = 0.78; % 78.5%--survivorship for forager bee stage %0.653;%
+
+
+tel = 0.98; %through-stage survival for egg maturing to 1st instar larva
+tlp = 0.85; %through-stage survival for larva maturaing to pupa
+tpn = 0.98; %through-stage survival for pupa maturing to nurse bee
+tnh = 0.98; %through stage survival for nurse bee maturing to house bee
+thf = 0.98; %through-stage survival for house been maturing to forager
+
 
  %% Stage Structure for field season bees-normal cycle: nonlinearities.1=egg,2=larvae,3=pupae,4=nurse,5=house,6=forager
 s = zeros(6,agemax);
@@ -253,7 +282,7 @@ Vt = Vt - storedhoney ;
 %% Pollen, Honey, Cells net input 
 Pt = Pt - foodeaten + storedfood;
 Pt1 = max(0,Pt); % Updated pollen stores at end of day
-Ht1 = Ht - honeyeaten + storedhoney; % Updated honey stores at end of day, capped by total size of hive
+Ht1 = Ht + storedhoney; % Updated honey stores at end of day, capped by total size of hive
 Vt1 = Vt; % Vacant cells at end of the day - gets updated throughout file  
 Nt1(1) = R; %R; %number of eggs laid today, these are now the age zero eggs
 
